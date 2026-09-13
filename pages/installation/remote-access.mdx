@@ -32,6 +32,31 @@ All the example configurations listed here are user submitted. If you would like
 * [NGINX Proxy Manager Example](remote-access/npm-example)
 * [SWAG Example](remote-access/swag-example)
 
+### Additional Setup for Proxies Hosted Externally
+
+For security reasons, Kavita does not trust `X-Forwarded-Host` and other forwarding headers sent by proxies from outside of `localhost`. Therefore, if you plan to deploy your reverse proxy on another host, additional setup is required. Otherwise, scenarios like EPUB images might break.
+
+Edit your `appsettings.json` configuration file to include the following line. For native installs, the file is located in the `config` folder. For Docker deployments, check your mounted config volume.
+
+```json
+{
+  "KnownProxies": [ "<ip-for-proxy-1>", "<ip-for-proxy-2>", "<ip-for-proxy-3>" ]
+}
+```
+
+For example:
+
+```diff
+{
+  "Port": 5000,
+  "IpAddresses": "",
+  "BaseUrl": "/",
++ "KnownProxies": [ "192.0.2.1", "192.0.2.2", "3fff::1", "3fff::2" ]
+}
+```
+
+Alternatively, set `ASPNETCORE_FORWARDEDHEADERS_ENABLED` environment variable to `1` to disable this check and trust all proxies. However, this may open up security vulnerabilities by trusting unauthenticated rogue hosts.
+
 </Tabs.Tab>
 <Tabs.Tab>
 # VPN
